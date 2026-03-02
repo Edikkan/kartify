@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kartify-frontend
+  namespace: kartify
+  labels:
+    app: kartify-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kartify-frontend
+  template:
+    metadata:
+      labels:
+        app: kartify-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-registry/kartify-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://api.kartify.yourdomain.com/api"
+        - name: NEXT_PUBLIC_SITE_URL
+          value: "https://kartify.yourdomain.com"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
