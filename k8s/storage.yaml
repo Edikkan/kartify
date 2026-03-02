@@ -1,0 +1,39 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kartify-storage
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: longhorn.io/volume
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "30"
+  fromBackup: ""
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kartify-postgres-pvc
+  namespace: kartify
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kartify-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kartify-redis-pvc
+  namespace: kartify
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: kartify-storage
