@@ -1,0 +1,14 @@
+apiVersion: v2
+name: kartify
+description: A Helm chart for Kartify E-Commerce Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ecommerce
+  - kubernetes
+  - nextjs
+  - nodejs
+maintainers:
+  - name: Your Name
+    email: your@email.com
