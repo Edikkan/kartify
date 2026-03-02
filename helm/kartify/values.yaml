@@ -1,0 +1,90 @@
+# Default values for kartify
+
+replicaCount:
+  frontend: 2
+  backend: 3
+
+image:
+  frontend:
+    repository: your-registry/kartify-frontend
+    tag: latest
+    pullPolicy: Always
+  backend:
+    repository: your-registry/kartify-backend
+    tag: latest
+    pullPolicy: Always
+
+service:
+  frontend:
+    type: ClusterIP
+    port: 3000
+  backend:
+    type: ClusterIP
+    port: 5000
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: kartify.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: api.kartify.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: kartify-tls
+      hosts:
+        - kartify.yourdomain.com
+        - api.kartify.yourdomain.com
+
+resources:
+  frontend:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  backend:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+postgresql:
+  enabled: true
+  auth:
+    username: kartify
+    password: kartify123
+    database: kartify
+  persistence:
+    enabled: true
+    size: 10Gi
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  persistence:
+    enabled: true
+    size: 5Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
